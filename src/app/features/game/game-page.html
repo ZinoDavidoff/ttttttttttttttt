@@ -1,0 +1,41 @@
+@let scoreboard = sandbox.scoreboard$ | async;
+@let board = sandbox.board$ | async;
+@let currentPlayer = sandbox.currentPlayer$ | async;
+@let winningLine = sandbox.winningLine$ | async;
+@let isRoundOver = sandbox.isRoundOver$ | async;
+@let roundWinner = sandbox.roundWinner$ | async;
+@let currentGame = sandbox.currentGame$ | async;
+@let isLastGame = sandbox.isLastGame$ | async;
+
+@if (scoreboard && board && currentPlayer) {
+  <section class="game">
+    <app-scoreboard [vm]="scoreboard" />
+
+    <div class="game__arena">
+      <app-game-board
+        class="game__board"
+        [board]="board"
+        [currentTurn]="currentPlayer.mark"
+        [winningLine]="winningLine ?? []"
+        [disabled]="!!isRoundOver"
+        (cellSelected)="sandbox.playCell($event)"
+      />
+    </div>
+
+    <div class="game__footer">
+      @if (isRoundOver) {
+        <app-round-result
+          [winner]="roundWinner"
+          [gameNumber]="currentGame ?? 1"
+          [isLastGame]="!!isLastGame"
+          (next)="isLastGame ? sandbox.showResults() : sandbox.nextGame()"
+        />
+      } @else {
+        <p class="turn" aria-live="polite">
+          <span [class]="'mark-' + currentPlayer.mark.toLowerCase()">{{ currentPlayer.name }}</span>
+          to move
+        </p>
+      }
+    </div>
+  </section>
+}

@@ -1,0 +1,53 @@
+@let winner = sandbox.tournamentWinner$ | async;
+@let standings = sandbox.standings$ | async;
+@let score = sandbox.score$ | async;
+@let history = sandbox.gameHistory$ | async;
+
+<section class="results card">
+  <header class="hero">
+    <p class="eyebrow">Tournament complete</p>
+
+    @if (winner) {
+      <span
+        class="hero__mark"
+        [class]="'mark-' + winner.mark.toLowerCase()"
+        aria-hidden="true"
+      >{{ winner.mark }}</span>
+      <h1 class="hero__title">{{ winner | playerSymbol }} wins the tournament!</h1>
+    } @else {
+      <span class="hero__mark hero__mark--tie" aria-hidden="true">
+        <span class="mark-x">X</span>=<span class="mark-o">O</span>
+      </span>
+      <h1 class="hero__title">It's a tie!</h1>
+    }
+  </header>
+
+  <dl class="standings">
+    @for (standing of standings; track standing.player.mark) {
+      <div
+        class="standings__item"
+        [class]="'mark-' + standing.player.mark.toLowerCase()"
+      >
+        <dt>{{ standing.player | playerSymbol }}</dt>
+        <dd>{{ standing.wins }}</dd>
+      </div>
+    }
+
+    <div class="standings__item standings__item--draws">
+      <dt>Draws</dt>
+      <dd>{{ score?.draws ?? 0 }}</dd>
+    </div>
+  </dl>
+
+  @if (history) {
+    <app-game-history [games]="history" />
+  }
+
+  <button
+    type="button"
+    class="btn btn--primary btn--block"
+    (click)="sandbox.playAgain()"
+  >
+    Play again
+  </button>
+</section>

@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  align-self: stretch;
+  /* Fill the shell's main area so the board can use all remaining height. */
+  width: min(100%, 720px);
+}
+
+.game {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  gap: clamp(0.75rem, 2.5vh, 1.5rem);
+  height: 100%;
+
+  &__arena {
+    /* The arena takes remaining height; the board stays square inside it. */
+    container-type: size;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 0;
+  }
+
+  &__board {
+    width: min(100cqw, 100cqh, 540px);
+  }
+
+  &__footer {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 4.25rem;
+    max-width: 540px;
+  }
+}
+
+app-scoreboard {
+  width: 100%;
+}
+
+.turn {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+
+  span {
+    font-weight: 700;
+  }
+}

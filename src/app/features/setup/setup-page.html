@@ -1,0 +1,77 @@
+@let one = controls.playerOneName;
+@let two = controls.playerTwoName;
+@let duplicate = form.hasError('duplicateNames') && (one.touched || two.touched);
+@let playerTwoMark = playerTwoMark$ | async;
+
+<form class="setup card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <header class="setup__header">
+    <p class="eyebrow">New tournament</p>
+    <h1 class="setup__title">Who's playing?</h1>
+  </header>
+
+  <div class="players">
+    <fieldset class="player">
+      <legend class="eyebrow">Player 1</legend>
+
+      <input class="input" formControlName="playerOneName" placeholder="Enter a name" autocomplete="off"
+        [maxlength]="nameMaxLength" [attr.aria-invalid]="one.touched && one.invalid" />
+
+      <p class="field__error" role="alert">
+        @if (one.touched && one.hasError('notBlank')) {
+        Player 1 needs a name
+        }
+      </p>
+
+      <div class="segmented" role="radiogroup" aria-label="Player 1 symbol">
+        @for (mark of marks; track mark) {
+        <label class="segmented__option" [class]="'mark-' + mark.toLowerCase()">
+          <input type="radio" formControlName="playerOneMark" [value]="mark" />
+          <span>{{ mark }}</span>
+        </label>
+        }
+      </div>
+    </fieldset>
+
+    <span class="players__vs" aria-hidden="true">vs</span>
+
+    <fieldset class="player">
+      <legend class="eyebrow">Player 2</legend>
+
+      <input class="input" formControlName="playerTwoName" placeholder="Enter a name" autocomplete="off"
+        [maxlength]="nameMaxLength" [attr.aria-invalid]="(two.touched && two.invalid) || duplicate" />
+
+      <p class="field__error" role="alert">
+        @if (two.touched && two.hasError('notBlank')) {
+        Player 2 needs a name
+        } @else if (duplicate) {
+        Names must be different
+        }
+      </p>
+
+      <div class="segmented segmented--static" aria-live="polite">
+        <span class="segmented__option is-selected" [class]="'mark-' + playerTwoMark?.toLowerCase()">
+          <span>{{ playerTwoMark }}</span>
+        </span>
+      </div>
+    </fieldset>
+  </div>
+
+  <fieldset class="games">
+    <legend class="eyebrow">Number of games</legend>
+
+    <div class="segmented segmented--wide" role="radiogroup" aria-label="Number of games">
+      @for (count of gameCounts; track count) {
+      <label class="segmented__option">
+        <input type="radio" formControlName="totalGames" [value]="count" />
+        <span>Best of {{ count }}</span>
+      </label>
+      }
+    </div>
+  </fieldset>
+
+  <button type="submit" class="btn btn--primary btn--block">
+    Start tournament
+  </button>
+
+  <p class="setup__hint">X opens game 1 · the first move alternates every game</p>
+</form>
